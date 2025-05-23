@@ -1,0 +1,45 @@
+<div>
+    <p>Total Modelos: {{ total_modelos }}</p>
+    <p>Total Usuarios: {{ total_usuarios }}</p>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Posición</th>
+            <th>Modelo</th>
+            <th>Estado</th>
+            <th>Usuarios</th>
+            <th>Seguidores</th>
+            <th>Online</th>
+            <th>Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for modelo in modelos %}
+        <tr
+            {% if modelo.Estado == 'private' %}
+            class="bg-purple text-white"
+        {% elif modelo.Estado == 'away' %}
+            class="bg-warning"
+        {% endif %}
+        >
+
+            <td>{{ modelo.Posicion }}</td>
+            <td>{{ modelo.Modelo }}</td>
+            <td>
+                {{ modelo.Estado }}
+                {% if modelo.Estado == 'private' %}
+                    <i class="fa-solid fa-user-lock" style="color: #63E6BE;" data-toggle="tooltip" title="Modo privado"></i></i>
+                {% elif modelo.Estado == 'away' %}
+                    <i class="fas fa-coffee ml-2 text-dark" data-toggle="tooltip" title="Ausente"></i>
+                {% endif %}
+            </td>
+            <td>{{ modelo.Usuarios }}</td>
+            <td>{{ modelo.Seguidores }}</td>
+            <td>{{ modelo.Online }}</td>
+            <td>{{ modelo.Tags }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
