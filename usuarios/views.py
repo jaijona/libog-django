@@ -39,3 +39,6 @@ def logout_usuario(request):
 
 def tabla_posiciones(request):
     return render(request, 'tabla_posiciones.html')
+
+def home(request):
+    return render(request, 'login.html')
