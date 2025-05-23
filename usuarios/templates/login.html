@@ -13,7 +13,7 @@
         {% endfor %}
     {% endif %}
 
-    <form method="post">
+    <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
         <label for="username">Usuario:</label><br>
         <input type="text" name="username" id="username"><br><br>
