@@ -21,14 +21,14 @@ table.table {
 }
 
 .table thead th {
-  padding: 10px;
+  padding: 14px;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .table tbody td {
-  padding: 10px 12px;
+  padding: 12px 14px;
   font-size: 14px;
   vertical-align: middle;
   border-bottom: 1px solid #38384a;
