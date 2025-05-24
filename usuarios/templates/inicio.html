@@ -11,10 +11,41 @@
     <h2>Selecciona una opción:</h2>
     <a href="{% url 'registro_modelos' %}"><button>Registro Modelos</button></a>
     </a>
-    <a href="{% url 'mostrar_datos' %}"><button>Tabla de Posiciones</button>
-    </a>
-
+    <button onclick="abrirVentanaPopup()" class="btn btn-primary">Tabla de Posiciones</button>
+    <!--<a href="{% url 'mostrar_datos' %}"><button>Tabla de Posiciones</button></a>
+    
+-->
     <br>
     <a href="{% url 'logout' %}">Cerrar sesión</a>
+    <!-- Modal vacío -->
+    <div class="modal fade" id="modalTabla" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tabla de Posiciones</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" id="contenido-modal">
+                    <!-- Aquí se cargará la tabla -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- jQuery debe ir primero -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Bootstrap JS (requiere jQuery) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function abrirVentanaPopup() {
+        window.open(
+            "{% url 'mostrar_datos' %}",
+            "popup",
+            "width=900,height=600,resizable=yes,scrollbars=yes"
+        );
+    }
+    </script>
+
+
 </body>
 </html>

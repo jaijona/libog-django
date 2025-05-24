@@ -1,62 +1,4 @@
 
-<!--
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Modelos Filtrados</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Modelos Filtrados</h1>
-        <p>Total Modelos: {{ total_modelos }}</p>
-        <p>Total Usuarios: {{ total_usuarios }}</p>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Posición</th>
-                    <th>Modelo</th>
-                    <th>Estado</th>
-                    <th>Usuarios</th>
-                    <th>Seguidores</th>
-                    <th>Online Time</th>
-                    <th>Tags</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for modelo in modelos %}
-                <tr>
-                    <td>{{ modelo.Posición }}</td>
-                    <td>{{ modelo.Modelo }}</td>
-                    <td>{{ modelo.Estado }}</td>
-                    <td>{{ modelo.Usuarios }}</td>
-                    <td>{{ modelo.Seguidores }}</td>
-                    <td>{{ modelo.Online }}</td>
-                    <td>{{ modelo.Tags }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <button id="actualizar-btn" class="btn btn-primary mb-3">Actualizar</button>
-
-    <div id="contenedor-tabla">
-        {% include 'posicion/tabla_modelos.html' %}
-    </div>
-
-    <script>
-    document.getElementById("actualizar-btn").addEventListener("click", function() {
-        fetch("{% url 'actualizar_tabla' %}")
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("contenedor-tabla").innerHTML = data.html;
-            });
-    });
-    </script>
-</body>
-</html>
--->
 
 <!DOCTYPE html>
 <html lang="es">
@@ -74,18 +16,21 @@
             background-color: #e8fa0b !important;
         }
     </style>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'posicion/css/tabla.css' %}">
+
 </head>
 <body>
     <div class="container">
-        <h1>Modelos Filtrados</h1>
-
-        <!-- ✅ Botón para actualizar -->
-        <button id="actualizar-btn" class="btn btn-primary mb-3">Actualizar</button>
+        <h3>Modelos Filtrados</h3>
 
         <!-- ✅ Bloque que se actualizará -->
         <div id="contenedor-tabla">
             {% include 'posicion/tabla_modelos.html' %}
         </div>
+        <!-- ✅ Botón para actualizar -->
+        <button id="actualizar-btn" class="btn btn-primary mb-3">Actualizar</button>
     </div>
 
     <!-- ✅ Script para hacer el fetch -->

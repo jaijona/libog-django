@@ -41,26 +41,29 @@ def obtener_datos_filtrados(id_login):
         print("Error al procesar datos de la API:", e)
         return pd.DataFrame()
 
+
 def mostrar_datos(request):
-    id_login = request.GET.get('id_login', 1)  # Cambia esto según tu lógica
-    df,num_modelos, total_usuarios = obtener_datos_filtrados(id_login)
+    id_login = request.GET.get('id_login', 1)
+    df, num_modelos, total_usuarios = obtener_datos_filtrados(id_login)
+
     context = {
         'modelos': df.to_dict(orient='records'),
         'total_modelos': num_modelos,
         'total_usuarios': total_usuarios,
     }
+
+    # Si es una llamada AJAX, devuelve solo el HTML parcial
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        html = render_to_string('posicion/tabla_modelos.html', context, request=request)
+        return JsonResponse({'html': html})
+
+    # Si no es AJAX, renderiza la página completa (útil para pruebas)
     return render(request, 'posicion/mostrar_datos.html', context)
 
 def actualizar_tabla(request):
     id_login = request.GET.get('id_login', 1)
     df, num_modelos, total_usuarios= obtener_datos_filtrados(id_login)
-    """
-    context = {
-        'modelos': df.to_dict(orient='records'),
-        'total_modelos': len(df),
-        'total_usuarios': df['Usuarios'].sum() if not df.empty else 0,
-    }
-    """
+
     context = {
         'modelos': df.to_dict(orient='records'),
         'total_modelos': num_modelos,
