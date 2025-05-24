@@ -1,59 +1,93 @@
-/* Estilos generales para la tabla */
-table.table {
-  font-size: 14px;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-/* Colores para el encabezado */
-thead.thead-dark th {
-  background-color: #343a40;
-  color: white;
-  text-align: center;
-}
-
-/* Estilo de celdas */
-table.table td, table.table th {
-  vertical-align: middle;
-  padding: 1px;
-  text-align: center;
-}
-
-/* Colores personalizados para estado */
-tr.bg-purple {
-  background-color: #c51fe6 !important;
-  color: #ffffff;
-}
-
-tr.bg-warning {
-  background-color: #fbff06 !important;
-  color: #000000;
-}
-
-/* Íconos con margen y color sutil */
-td i {
-  margin-left: 4px;
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-/* Hover para filas */
-table.table tbody tr:hover {
-  background-color: #f1f1f1;
-  cursor: pointer;
-}
-
-/* Bordes suaves */
-table.table th, table.table td {
-  border: 1px solid #dee2e6;
-}
-
-/* Responsive fixes */
+/* Dark Mode Table Styles */
 .table-responsive {
+  margin: 20px 0;
+  border-radius: 8px;
   overflow-x: auto;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
 }
 
-/* Aumentar el espacio para los encabezados largos */
-thead th {
-  white-space: nowrap;
+table.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1e1e2f;
+  color: #e0e0e0;
+}
+
+.table thead {
+  background-color: #2d2d3c;
+  color: #ffffff;
+  text-align: left;
+}
+
+.table thead th {
+  padding: 14px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table tbody td {
+  padding: 12px 14px;
+  font-size: 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid #38384a;
+}
+
+.table tbody tr:hover {
+  background-color: #2a2a40;
+  transition: background-color 0.3s ease;
+}
+
+/* Custom status backgrounds */
+.bg-purple {
+  background-color: #5e3b89 !important;
+  color: #f3f3f3;
+}
+
+.bg-warning {
+  background-color: #b58900 !important;
+  color: #fff;
+}
+
+/* Icons */
+.table i {
+  margin-left: 8px;
+  color: #f1c40f;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .table thead {
+    display: none;
+  }
+
+  .table, .table tbody, .table tr, .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    margin-bottom: 15px;
+    background-color: #2d2d3c;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  .table td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    padding-right: 10px;
+    font-weight: bold;
+    text-align: left;
+    color: #aaa;
+  }
 }

@@ -1,0 +1,59 @@
+/* Estilos generales para la tabla */
+table.table {
+  font-size: 14px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Colores para el encabezado */
+thead.thead-dark th {
+  background-color: #343a40;
+  color: white;
+  text-align: center;
+}
+
+/* Estilo de celdas */
+table.table td, table.table th {
+  vertical-align: middle;
+  padding: 1px;
+  text-align: center;
+}
+
+/* Colores personalizados para estado */
+tr.bg-purple {
+  background-color: #c51fe6 !important;
+  color: #ffffff;
+}
+
+tr.bg-warning {
+  background-color: #fbff06 !important;
+  color: #000000;
+}
+
+/* Íconos con margen y color sutil */
+td i {
+  margin-left: 4px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Hover para filas */
+table.table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+/* Bordes suaves */
+table.table th, table.table td {
+  border: 1px solid #dee2e6;
+}
+
+/* Responsive fixes */
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Aumentar el espacio para los encabezados largos */
+thead th {
+  white-space: nowrap;
+}
