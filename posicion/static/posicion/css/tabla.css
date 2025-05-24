@@ -15,7 +15,7 @@ thead.thead-dark th {
 /* Estilo de celdas */
 table.table td, table.table th {
   vertical-align: middle;
-  padding: 8px;
+  padding: 2px;
   text-align: center;
 }
 
