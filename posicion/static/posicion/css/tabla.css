@@ -26,7 +26,8 @@ tr.bg-purple {
 }
 
 tr.bg-warning {
-  background-color: #fff3cd !important;
+  background-color: #fbff06 !important;
+  color: #000000;
 }
 
 /* Íconos con margen y color sutil */

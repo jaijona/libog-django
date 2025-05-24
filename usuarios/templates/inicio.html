@@ -18,6 +18,7 @@
     <br>
     <a href="{% url 'logout' %}">Cerrar sesión</a>
     <!-- Modal vacío -->
+    <!--
     <div class="modal fade" id="modalTabla" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -26,11 +27,12 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body" id="contenido-modal">
-                    <!-- Aquí se cargará la tabla -->
+                    
                 </div>
             </div>
         </div>
     </div>
+    -->
     <!-- jQuery debe ir primero -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
@@ -41,7 +43,7 @@
         window.open(
             "{% url 'mostrar_datos' %}",
             "popup",
-            "width=900,height=600,resizable=yes,scrollbars=yes"
+            "width=1100,height=600,resizable=yes,scrollbars=yes"
         );
     }
     </script>
