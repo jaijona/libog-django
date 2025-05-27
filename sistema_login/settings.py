@@ -119,7 +119,7 @@ USE_TZ = True
 
 #cierra sesion al cerrar navegador
 # Duración máxima de la sesión sin actividad (en segundos)
-SESSION_COOKIE_AGE = 1800  # 900 segundos = 15 minutos
+SESSION_COOKIE_AGE = 1800  # 1800 segundos = 30 minutos
 
 # Opcional: cerrar sesión al cerrar el navegador también
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
