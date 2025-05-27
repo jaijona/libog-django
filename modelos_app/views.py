@@ -62,7 +62,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import ModeloRegistrado
 from .forms import ModeloRegistradoForm
 from django.contrib import messages
+from django.shortcuts import render
+from usuarios.utils import login_requerido
 
+
+@login_requerido
 def registro_modelos(request):
     studio_id = request.session.get('usuario_id')
     print("studio_id:", studio_id)  # ← Esto ahora debe aparecer

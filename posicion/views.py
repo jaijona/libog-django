@@ -5,6 +5,8 @@ from django.shortcuts import render
 from modelos_app.models import ModeloRegistrado as informacion
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from django.shortcuts import render
+from usuarios.utils import login_requerido
 
 def obtener_modelos_deseados(id_login):
     return informacion.objects.filter(estado=1, studio_id=id_login).values_list('usuario', flat=True)
@@ -41,7 +43,7 @@ def obtener_datos_filtrados(id_login):
         print("Error al procesar datos de la API:", e)
         return pd.DataFrame()
 
-
+@login_requerido
 def mostrar_datos(request):
     id_login = request.GET.get('id_login', 1)
     df, num_modelos, total_usuarios = obtener_datos_filtrados(id_login)
@@ -59,7 +61,7 @@ def mostrar_datos(request):
 
     # Si no es AJAX, renderiza la página completa (útil para pruebas)
     return render(request, 'posicion/mostrar_datos.html', context)
-
+@login_requerido
 def actualizar_tabla(request):
     id_login = request.GET.get('id_login', 1)
     df, num_modelos, total_usuarios= obtener_datos_filtrados(id_login)
