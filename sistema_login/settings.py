@@ -117,6 +117,16 @@ USE_I18N = True
 
 USE_TZ = True
 
+#cierra sesion al cerrar navegador
+# Duración máxima de la sesión sin actividad (en segundos)
+SESSION_COOKIE_AGE = 1800  # 900 segundos = 15 minutos
+
+# Opcional: cerrar sesión al cerrar el navegador también
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# (Opcional, más estricto) Hace que el contador se reinicie solo si hay una nueva solicitud
+SESSION_SAVE_EVERY_REQUEST = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
