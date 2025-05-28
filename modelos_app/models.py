@@ -32,10 +32,11 @@ class ModeloRegistrado(models.Model):
     class Meta:
         db_table = 'informacion'
         constraints = [
-            #models.UniqueConstraint(fields=['studio', 'nombre'], name='unique_nombre_por_studio'),
             models.UniqueConstraint(fields=['studio', 'usuario'], name='unique_usuario_por_studio')
         ]
         #ordering = ['-fecha_registro']
 
     def __str__(self):
-        return self.nombre
+        #return self.nombre,self.usuario
+        return f"{self.nombre} ({self.usuario})"
+        

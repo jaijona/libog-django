@@ -37,8 +37,11 @@ def logout_usuario(request):
 #def registro_modelos(request):
 #    return render(request, 'registro_modelos.html')
 
-def tabla_posiciones(request):
-    return render(request, 'tabla_posiciones.html')
+#def tabla_posiciones(request):
+#    return render(request, 'tabla_posiciones.html')
+
+#def ver_promedios(request):
+#    return render(request, 'ver_promedios.html')
 
 def home(request):
     return render(request, 'login.html')

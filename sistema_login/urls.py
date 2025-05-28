@@ -23,5 +23,6 @@ urlpatterns = [
     path('', include('usuarios.urls')),  # 👈 Esto importa las rutas de la app
     path('', include('modelos_app.urls')),        # rutas para modelos registrados
     path('', include('posicion.urls')), #cuadro de informacion
+    path('', include('promedio.urls')), #promedio
 ]
 
