@@ -13,8 +13,10 @@
     {% if usuario_id %}
         <h2>Selecciona una opción:</h2>
         <a href="{% url 'registro_modelos' %}"><button>Registro Modelos</button></a>
-        </a>
+        
         <button onclick="abrirVentanaPopup()" class="btn btn-primary">Tabla de Posiciones</button>
+
+        <a href="{% url 'ver_promedios' %}"><button>Promedio Historico</button></a>
     
     {% else %}
         <p>No tienes acceso. Inicia sesión.</p>

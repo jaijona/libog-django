@@ -1,0 +1,150 @@
+
+<!--
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Promedios de Modelos</title>
+    
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        th { background-color: #f4f4f4; }
+        form { margin-bottom: 20px; }
+        input, select { padding: 5px; margin-right: 10px; }
+        .btn { padding: 5px 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Promedios de de Modelos</h1>
+    <p>Studio logueado: {{ id_login }}</p>
+    <form method="get">
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" value="{{ fecha_filtro }}">
+
+        <label for="modelo">Modelo:</label>
+        <select id="modelo" name="modelo">
+            <option value="">-- Todos --</option>
+            {% for m in modelos %}
+                <option value="{{ m }}" {% if m == modelo_filtro %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn">Filtrar</button>
+        <a href="{% url 'ver_promedios' %}" class="btn">Limpiar</a>
+    </form>
+
+    {% if datos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Modelo</th>
+                    <th>Studio ID</th>
+                    <th>Promedio</th>
+                    <th>Contador</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in datos %}
+                    <tr>
+                        <td>{{ d.id_modelo.usuario }}</td>
+                        <td>{{ d.id_studio }}</td>
+                        <td>{{ d.promedio }}</td>
+                        <td>{{ d.contador }}</td>
+                        <td>{{ d.fecha }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay datos disponibles.</p>
+    {% endif %}
+
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Promedios</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Lista de Promedios</h1>
+    <form method="get">
+    <label for="fecha">Fecha:</label>
+    <input type="date" name="fecha" id="fecha" value="{{ fecha_filtro }}">
+    
+    <label for="usuario">Usuario:</label>
+    <select name="usuario" id="usuario">
+        <option value="">-- Todos --</option>
+        {% for user in usuarios %}
+            <option value="{{ user }}" {% if user == usuario_filtro %}selected{% endif %}>{{ user }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="jornada">Jornada:</label>
+    <select name="jornada" id="jornada">
+        <option value="">-- Todos --</option>
+        {% for jour in jornada %}
+            <option value="{{ jour }}" {% if jour == jornada_filtro %}selected{% endif %}>{{ jour }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filtrar</button>
+    </form>
+
+    <br>
+
+
+    <!-- Botón Exportar -->
+    <form method="get" action="{% url 'exportar_excel' %}">
+        <input type="hidden" name="fecha" value="{{ fecha_filtro }}">
+        <input type="hidden" name="usuario" value="{{ usuario_filtro }}">
+        <input type="hidden" name="jornada" value="{{ jornada_filtro }}">
+        <button type="submit">Exportar a Excel</button>
+    </form>
+
+    <a href="{% url 'inicio' %}"><button>Inicio</button></a>
+
+
+
+
+    <table>
+        <thead>
+            <tr>
+                
+                <th>ID Modelo</th>
+                <th>ID Studio</th>
+                <th>Posicion Promedio</th>
+                
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in datos %}
+                <tr>
+                    
+                    <td>{{ item.id_modelo.usuario }}</td>
+                    <td>{{ item.id_modelo.jornada }}</td>
+                    <td>{{ item.promedio }}</td>
+                    
+                    <td>{{ item.fecha }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6">No hay datos.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+
+

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'usuarios',
     'modelos_app',
     'posicion',
+    'promedio',
 ]
 
 MIDDLEWARE = [
