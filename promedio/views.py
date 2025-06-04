@@ -1,25 +1,4 @@
-"""
-from django.shortcuts import render,redirect
-from .models import Promedio
-from usuarios.utils import login_requerido
 
-@login_requerido
-#def ver_promedios(request):
-#    datos = Promedio.objects.all().order_by('-fecha')
-#    print("Cantidad de registros encontrados:", datos.count())
-#    return render(request, 'ver_promedios.html', {'datos': datos})
-
-def ver_promedios(request):
-    id_studio = request.session.get('usuario_id')  # o 'id_login', según cómo guardes el login
-
-    if not id_studio:
-        # Opcional: redirigir o mostrar error si no está logueado
-        return redirect('login')
-
-    datos = Promedio.objects.filter(id_studio=id_studio).order_by('-fecha')
-    print("Cantidad de registros encontrados para id_studio", id_studio, ":", datos.count())
-    return render(request, 'ver_promedios.html', {'datos': datos})
-"""
 from django.db.models.functions import TruncDate
 from datetime import datetime
 from usuarios.utils import login_requerido
@@ -29,10 +8,28 @@ from modelos_app.models import ModeloRegistrado
 import openpyxl
 from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
+from django.http import JsonResponse
+from promedio.utils import guardar_promedios 
+import os
+
+CLAVE_SECRETA = os.getenv("CLAVE_SECRETA")
+
+def api_guardar_promedios(request):
+    key = request.GET.get("key")
+
+    if key != CLAVE_SECRETA:
+        return JsonResponse({"error": "No autorizado"}, status=403)
+
+    try:
+        guardar_promedios()
+        return JsonResponse({"status": "ok"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @login_requerido
 def ver_promedios(request):
-    id_studio = request.session.get('usuario_id')
+    id_studio = request.session.get('id_studio')
+    print("studio_id:", id_studio)  # ← Esto ahora debe aparecer
     datos = Promedio.objects.filter(id_studio=id_studio,id_modelo__estado=1).select_related('id_modelo')
 
     # Obtener filtros

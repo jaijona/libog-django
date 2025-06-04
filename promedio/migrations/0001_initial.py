@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('modelos_app', '0002_rename_fecha_registro_modeloregistrado_fecha_and_more'),
+        
     ]
 
     operations = [

@@ -88,7 +88,7 @@ def registro_modelos(request):
             form = ModeloRegistradoForm(request.POST, studio_id=studio_id)
             if form.is_valid():
                 modelo = form.save(commit=False)
-                modelo.studio_id = studio_id
+                modelo.id = studio_id
                 modelo.estado = 1
                 modelo.save()
                 messages.success(request, "Modelo guardado correctamente.")
