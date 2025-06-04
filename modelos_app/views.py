@@ -78,7 +78,7 @@ def registro_modelos(request):
     
     modelos = ModeloRegistrado.objects.filter(studio_id=studio_id, estado=1)
     print("Modelos encontrados:", modelos.count())  # ✅ ahora modelos está definido
-
+    print("studio_id en sesión:", studio_id)
     if request.method == 'POST':
         accion = request.POST.get('accion')
         modelo_id = request.POST.get('modelo_id')
@@ -88,7 +88,7 @@ def registro_modelos(request):
             form = ModeloRegistradoForm(request.POST, studio_id=studio_id)
             if form.is_valid():
                 modelo = form.save(commit=False)
-                modelo.id = studio_id
+                modelo.studio_id = studio_id
                 modelo.estado = 1
                 modelo.save()
                 messages.success(request, "Modelo guardado correctamente.")
