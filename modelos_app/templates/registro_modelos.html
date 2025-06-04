@@ -6,6 +6,133 @@
     <meta charset="UTF-8">
     <title>Registro de Modelos</title>
     <link rel="stylesheet" href="{% static 'modelos_app/css/registro.css' %}">
+    <style>
+        /* Fondo y texto base */
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        /* Títulos */
+        h2, h3 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        /* Mensajes */
+        p {
+            font-size: 16px;
+        }
+
+        /* Estilo para mensajes */
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            color: #ffdddd;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Campos del formulario */
+        form p {
+            margin: 10px 0;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        /* Botones del formulario */
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            background-image: linear-gradient(315deg, #00c6ff 0%, #0072ff 74%);
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-image: linear-gradient(315deg, #0072ff 0%, #00c6ff 74%);
+            transform: scale(1.05);
+        }
+
+        /* Tabla de modelos registrados */
+        table {
+            width: 90%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ffffff30;
+        }
+
+        th {
+            background-color: #0072ff;
+            background-image: linear-gradient(315deg, #00c6ff 0%, #0072ff 74%);
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Botón "Select" */
+        td button {
+            padding: 6px 12px;
+            font-size: 13px;
+            background-color: #28a745;
+            background-image: linear-gradient(315deg, #28a745 0%, #218838 74%);
+        }
+
+        td button:hover {
+            background-image: linear-gradient(315deg, #218838 0%, #28a745 74%);
+            transform: scale(1.05);
+        }
+
+
+
+    </style>
 </head>
 <body>
     <h2>Registro de Modelos</h2>
