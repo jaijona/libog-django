@@ -2,6 +2,7 @@ import requests
 import json
 from datetime import date
 
+from django.db import connection  # ✅ Importar esto
 from modelos_app.models import ModeloRegistrado
 from promedio.models import Promedio
 
@@ -61,3 +62,7 @@ def guardar_promedios():
 
     except Exception as e:
         print(f"Error al guardar promedios: {str(e)}")
+
+    finally:
+        # ✅ Cerrar la conexión pase lo que pase
+        connection.close()

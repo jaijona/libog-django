@@ -1,20 +1,27 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import InfoStudio
-import bcrypt
 from .utils import login_requerido
+from django.contrib.auth.hashers import check_password
 
 def login_usuario(request):
+    
+
     if request.method == 'POST':
         username = request.POST['username']
-        password_ingresada = request.POST['password'].encode('utf-8')
+        password_ingresada = request.POST['password']
 
         try:
             usuario = InfoStudio.objects.get(username=username)
-            hash_guardado = usuario.password.encode('utf-8')
+            hash_guardado = usuario.password  # ya es un string compatible con check_password
 
-            if bcrypt.checkpw(password_ingresada, hash_guardado):
+            #if check_password(password_ingresada, hash_guardado):
+            #    request.session['usuario_id'] = usuario.id
+            #    return redirect('inicio')
+            if check_password(password_ingresada, hash_guardado):
                 request.session['usuario_id'] = usuario.id
+                request.session['id_studio'] = usuario.id_studio
+                request.session['cargo'] = usuario.cargo
                 return redirect('inicio')
             else:
                 messages.error(request, 'Contraseña incorrecta')
@@ -24,10 +31,14 @@ def login_usuario(request):
 
     return render(request, 'login.html')
 
+
 @login_requerido
 def inicio(request):
+    
     usuario_id = request.session.get('usuario_id')
-    return render(request, 'inicio.html', {'usuario_id': usuario_id})
+    id_studio = request.session.get('id_studio')
+    usuario = InfoStudio.objects.get(id=usuario_id)
+    return render(request, 'inicio.html', {'usuario': usuario, 'usuario_id':usuario_id,'id_studio':id_studio})
 
 def logout_usuario(request):
     

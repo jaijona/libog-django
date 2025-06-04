@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'modelos_app',
     'posicion',
     'promedio',
+    'monitores',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +86,7 @@ DATABASES = {
         'PASSWORD': 'gPDkaLJoBbQcrDD5xaLe',  # 👈 Cambia esto
         'HOST': 'ba69cotht6ptecop3sey-mysql.services.clever-cloud.com',                # o IP del servidor MySQL
         'PORT': '3306',                     # puerto por defecto de MySQL
+        'CONN_MAX_AGE': 180,  # o 300, según tu necesidad
     }
 }
 
@@ -144,3 +147,11 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Carpeta donde Django los copiará para producción
+
+
+TIME_ZONE = 'America/Bogota'
+USE_TZ = True
+
+
+
+

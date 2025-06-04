@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Monitores</title>
+    <link rel="stylesheet" href="{% static 'monitores/css/monitores.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body>
+    <h2>Registro de Monitores</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p class="mensaje">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <p>
+            {{ form.name.label_tag }} {{ form.name }}
+            {% for error in form.name.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+        {% if form.username %}
+        <p>
+            {{ form.username.label_tag }} {{ form.username}}
+            {% for error in form.username.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </p>
+        {% endif %}
+
+        <p>
+            {{ form.password.label_tag }} {{ form.password }}
+            {% for error in form.password.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </p>
+
+
+        <input type="hidden" name="monitor_id" id="monitor_id">
+
+        <p>Total monitores encontrados: {{ monitores|length }}</p>
+
+        <button type="submit" name="accion" value="guardar">Guardar</button>
+        <button type="submit" name="accion" value="modificar">Modificar</button>
+        <button type="submit" name="accion" value="eliminar" onclick="return confirm('¿Estás seguro que deseas eliminar este registro?')">Eliminar</button>
+    </form>
+
+    <a href="{% url 'inicio' %}">Volver al inicio</a>
+
+    <h3>Monitores Registrados</h3>
+    <table border="1">
+        <tr>
+            <th>Nombre</th>
+            <th>Usuario</th>
+            <th>Seleccionar</th>
+        </tr>
+        {% for monitor in monitores %}
+        <tr>
+            <td>{{ monitor.name }}</td>
+            <td>{{ monitor.username }}</td>
+            <td>
+                <button type="button" onclick="seleccionar('{{ monitor.id }}', '{{ monitor.name|escapejs }}', '{{ monitor.username|escapejs }}')">Seleccionar</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <script>
+        function seleccionar(id, name,username, password) {
+            document.getElementById('monitor_id').value = id;
+            document.getElementsByName('name')[0].value = name;
+            if (document.getElementsByName('username')[0]) {
+                document.getElementsByName('username')[0].value = username;
+            }
+            document.getElementsByName('password')[0].value = password;
+        }
+    </script>
+</body>
+</html>
