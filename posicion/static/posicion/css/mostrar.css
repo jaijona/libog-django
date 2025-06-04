@@ -21,7 +21,7 @@ thead {
 }
 
 thead th {
-    padding: 12px;
+    padding: 2px;
     font-weight: bold;
     text-align: center;
     background-image: linear-gradient(315deg, #00c6ff 0%, #0072ff 74%);
@@ -29,7 +29,7 @@ thead th {
 }
 
 tbody td {
-    padding: 10px;
+    padding: 2px;
     text-align: center;
     background-color: rgba(255, 255, 255, 0.05);
 }
@@ -59,8 +59,8 @@ td i {
 
 div p {
     font-size: 16px;
-    margin: 10px 0;
+    margin: 5px 0;
     text-align: center;
-    color: #ffffff;
+    color: #000000;
     font-weight: bold;
 }
