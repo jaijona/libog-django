@@ -42,6 +42,7 @@
     </tbody>
 </table>
 -->
+<p>Ultima hora de Actulizacion: {{ hora_actualizacion }}</p>
 <div class="table-responsive">
   <table class="table table-striped table-hover table-bordered">
     <thead class="thead-dark">
@@ -53,6 +54,7 @@
         <th>Seguidores</th>
         <th>Online</th>
         <th>Tags</th>
+        
       </tr>
     </thead>
     <tbody>
@@ -71,7 +73,8 @@
         <td>{{ modelo.Usuarios }}</td>
         <td>{{ modelo.Seguidores }}</td>
         <td>{{ modelo.Online }}</td>
-        <td>{{ modelo.Tags }}</td>
+        <td>{{ modelo.Tags|safe }}</td>
+        
       </tr>
       {% endfor %}
     </tbody>
@@ -82,4 +85,5 @@
 <div>
     <p>Total Modelos: {{ total_modelos }}</p>
     <p>Total Usuarios: {{ total_usuarios }}</p>
+    
 </div>
