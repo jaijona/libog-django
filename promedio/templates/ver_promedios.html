@@ -218,7 +218,7 @@
                         <td>
                             <span id="tokens-label-{{ item.id }}">{{ item.tokens }}</span>
                             <input type="number" id="tokens-input-{{ item.id }}" value="{{ item.tokens }}" style="display:none; width: 60px;">
-                            <button type="button" onclick="toggleEdit(this.dataset.id)" id="edit-button-{{ item.id }}">Editar</button>
+                            <button type="button" onclick="toggleEdit('{{ item.id }}')" id="edit-button-{{ item.id }}">Editar</button>
                         </td>
                         <td>{{ item.fecha }}</td>
                     </tr>
