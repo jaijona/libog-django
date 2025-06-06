@@ -27,6 +27,7 @@ class ModeloRegistrado(models.Model):
     genero = models.CharField(max_length=50)
     fecha = models.DateField(default=timezone.now)
     estado = models.IntegerField(default=1)
+    id_monitor = models.IntegerField(default=0)
     studio= models.ForeignKey(InfoStudio, on_delete=models.CASCADE)
 
     class Meta:

@@ -10,7 +10,9 @@ from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 from django.http import JsonResponse
 from promedio.utils import guardar_promedios 
+from django.views.decorators.csrf import csrf_exempt
 import os
+import json
 
 CLAVE_SECRETA = os.getenv("CLAVE_SECRETA")
 
@@ -25,6 +27,21 @@ def api_guardar_promedios(request):
         return JsonResponse({"status": "ok"})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+    
+@csrf_exempt  # solo si no tienes CSRF token, pero mejor manejarlo con token
+def actualizar_tokens(request, promedio_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            nuevo_valor = int(data.get("tokens"))
+            promedio = Promedio.objects.get(id=promedio_id)
+            promedio.tokens = nuevo_valor
+            promedio.save()
+            return JsonResponse({"status": "ok"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)})
+    return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+
 
 @login_requerido
 def ver_promedios(request):
@@ -36,6 +53,7 @@ def ver_promedios(request):
     fecha_filtro = request.GET.get('fecha')
     usuario_filtro = request.GET.get('usuario')
     jornada_filtro = request.GET.get('jornada')
+    
 
     # Aplicar filtro por fecha
     if fecha_filtro:
@@ -96,15 +114,15 @@ def exportar_excel(request):
     ws.title = "Promedios"
 
     # Encabezados
-    headers = ['Usuario', 'Jornada', 'Promedio', 'Fecha']
+    headers = ['Usuario', 'Jornada', 'Promedio', 'Tokens', 'Fecha']
     ws.append(headers)
 
     for item in datos:
         ws.append([
-            
             item.id_modelo.usuario,
             item.id_modelo.jornada,
-            item.promedio,          
+            item.promedio,
+            item.tokens,  # 👈 Aquí está
             item.fecha.strftime('%Y-%m-%d')
         ])
 
