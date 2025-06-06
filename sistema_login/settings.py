@@ -86,7 +86,7 @@ DATABASES = {
         'PASSWORD': 'gPDkaLJoBbQcrDD5xaLe',  # 👈 Cambia esto
         'HOST': 'ba69cotht6ptecop3sey-mysql.services.clever-cloud.com',                # o IP del servidor MySQL
         'PORT': '3306',                     # puerto por defecto de MySQL
-        'CONN_MAX_AGE': 180,  # o 300, según tu necesidad
+        'CONN_MAX_AGE': 60,  # o 300, según tu necesidad
     }
 }
 

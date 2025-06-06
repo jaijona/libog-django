@@ -72,10 +72,88 @@
     <meta charset="UTF-8">
     <title>Lista de Promedios</title>
     <style>
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-        th { background-color: #f4f4f4; }
+        /* --- Estilo para la tabla de posiciones --- */
+
+        .table-responsive {
+            margin: 20px auto;
+            width: 95%;
+            max-width: 1200px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: rgb(0, 0, 0);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #0072ff;
+        }
+
+        thead th {
+            padding: 2px;
+            font-weight: bold;
+            text-align: center;
+            background-image: linear-gradient(315deg, #00c6ff 0%, #0072ff 74%);
+            color: white;
+        }
+
+        tbody td {
+            padding: 2px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .bg-purple {
+            background-color: #6f42c1 !important;
+            color: white;
+        }
+
+        .bg-warning {
+            background-color: #f0ad4e !important;
+            color: black;
+        }
+
+        td i {
+            margin-left: 6px;
+            color: #ffc107;
+        }
+
+        div p {
+            font-size: 16px;
+            margin: 5px 0;
+            text-align: center;
+            color: #000000;
+            font-weight: bold;
+        }
+
+        td button {
+            padding: 4px 10px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        td button:hover {
+            background-color: #218838;
+        }
     </style>
+
 </head>
 <body>
     <h1>Lista de Promedios</h1>
@@ -116,34 +194,100 @@
     <a href="{% url 'inicio' %}"><button>Inicio</button></a>
 
 
-
-
-    <table>
-        <thead>
-            <tr>
-                
-                <th>ID Modelo</th>
-                <th>ID Studio</th>
-                <th>Posicion Promedio</th>
-                
-                <th>Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in datos %}
+    {% csrf_token %}
+    <div class="table-responsive">
+        <table>
+            <thead>
                 <tr>
-                    
-                    <td>{{ item.id_modelo.usuario }}</td>
-                    <td>{{ item.id_modelo.jornada }}</td>
-                    <td>{{ item.promedio }}</td>
-                    
-                    <td>{{ item.fecha }}</td>
+                
+                    <th>Modelo</th>
+                    <th>Usuario</th>
+                    <th>Jornada</th>
+                    <th>Posicion Promedio</th>
+                    <th>Tokens</th>
+                    <th>Fecha</th>
                 </tr>
-            {% empty %}
-                <tr><td colspan="6">No hay datos.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for item in datos %}
+                    <tr>
+                        <td>{{ item.id_modelo.nombre }}</td>
+                        <td>{{ item.id_modelo.usuario }}</td>
+                        <td>{{ item.id_modelo.jornada }}</td>
+                        <td>{{ item.promedio }}</td>
+                        <td>
+                            <span id="tokens-label-{{ item.id }}">{{ item.tokens }}</span>
+                            <input type="number" id="tokens-input-{{ item.id }}" value="{{ item.tokens }}" style="display:none; width: 60px;">
+                            <button type="button" onclick="toggleEdit(this.dataset.id)" id="edit-button-{{ item.id }}">Editar</button>
+                        </td>
+                        <td>{{ item.fecha }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">No hay datos.</td></tr>
+                {% endfor %}
+
+                <script>
+                    function toggleEdit(id) {
+                        id = parseInt(id);
+                        const label = document.getElementById(`tokens-label-${id}`);
+                        const input = document.getElementById(`tokens-input-${id}`);
+                        const button = document.getElementById(`edit-button-${id}`);
+
+                        if (input.style.display === "none") {
+                            // Mostrar input, ocultar label
+                            input.style.display = "inline-block";
+                            label.style.display = "none";
+                            button.textContent = "Guardar";
+                        } else {
+                            // Obtener el nuevo valor
+                            const nuevoValor = input.value;
+
+                            fetch(`/actualizar_tokens/${id}/`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRFToken": getCookie('csrftoken'),
+                                },
+                                body: JSON.stringify({ tokens: nuevoValor })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === "ok") {
+                                    label.textContent = nuevoValor;
+                                    input.style.display = "none";
+                                    label.style.display = "inline";
+                                    button.textContent = "Editar";
+                                } else {
+                                    alert("Error al guardar: " + (data.message || "desconocido"));
+                                }
+                            })
+                            .catch(error => {
+                                alert("Error en la solicitud");
+                                console.error(error);
+                            });
+                        }
+                    }
+
+                    // Función para obtener el token CSRF (requerido por Django)
+                    function getCookie(name) {
+                        let cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                        for (let cookie of cookies) {
+                                cookie = cookie.trim();
+                                if (cookie.startsWith(name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                </script>
+
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
 
