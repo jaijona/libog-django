@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Tokens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            max-width: 500px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .mensaje {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <h2>Registrar Tokens</h2>
+
+    {% if mensaje %}
+        <div class="mensaje">{{ mensaje }}</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="id_modelo">Modelo:</label>
+        {{ form.id_modelo }}
+
+        <label for="id_fecha">Fecha:</label>
+        {{ form.fecha }}
+
+        <label for="id_token_cb">Tokens CB:</label>
+        {{ form.token_cb }}
+
+        <label for="id_token_otro">Tokens Otro:</label>
+        {{ form.token_otro }}
+
+        <button type="submit">Guardar</button>
+    </form>
+    <a href="{% url 'inicio' %}"><button>Inicio</button></a>
+</body>
+</html>

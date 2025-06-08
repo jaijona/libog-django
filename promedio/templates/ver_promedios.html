@@ -204,89 +204,42 @@
                     <th>Usuario</th>
                     <th>Jornada</th>
                     <th>Posicion Promedio</th>
-                    <th>Tokens</th>
+                    <th>Usuario</th>
                     <th>Fecha</th>
                 </tr>
             </thead>
             <tbody>
-                {% for item in datos %}
-                    <tr>
-                        <td>{{ item.id_modelo.nombre }}</td>
-                        <td>{{ item.id_modelo.usuario }}</td>
-                        <td>{{ item.id_modelo.jornada }}</td>
-                        <td>{{ item.promedio }}</td>
-                        <td>
-                            <span id="tokens-label-{{ item.id }}">{{ item.tokens }}</span>
-                            <input type="number" id="tokens-input-{{ item.id }}" value="{{ item.tokens }}" style="display:none; width: 60px;">
-                            <button type="button" onclick="toggleEdit('{{ item.id }}')" id="edit-button-{{ item.id }}">Editar</button>
-                        </td>
-                        <td>{{ item.fecha }}</td>
-                    </tr>
+               
+                {% for item in page_obj %}
+                <tr>
+                    <td>{{ item.id_modelo.nombre }}</td>
+                    <td>{{ item.id_modelo.usuario }}</td>
+                    <td>{{ item.id_modelo.jornada }}</td>
+                    <td>{{ item.promedio|floatformat:2 }}</td>
+                    <td>{{ item.users|floatformat:1 }}</td>
+                    <td>{{ item.fecha }}</td>
+                </tr>
                 {% empty %}
-                    <tr><td colspan="6">No hay datos.</td></tr>
+                <tr><td colspan="7">No hay datos.</td></tr>
                 {% endfor %}
-
-                <script>
-                    function toggleEdit(id) {
-                        id = parseInt(id);
-                        const label = document.getElementById(`tokens-label-${id}`);
-                        const input = document.getElementById(`tokens-input-${id}`);
-                        const button = document.getElementById(`edit-button-${id}`);
-
-                        if (input.style.display === "none") {
-                            // Mostrar input, ocultar label
-                            input.style.display = "inline-block";
-                            label.style.display = "none";
-                            button.textContent = "Guardar";
-                        } else {
-                            // Obtener el nuevo valor
-                            const nuevoValor = input.value;
-
-                            fetch(`/actualizar_tokens/${id}/`, {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "X-CSRFToken": getCookie('csrftoken'),
-                                },
-                                body: JSON.stringify({ tokens: nuevoValor })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === "ok") {
-                                    label.textContent = nuevoValor;
-                                    input.style.display = "none";
-                                    label.style.display = "inline";
-                                    button.textContent = "Editar";
-                                } else {
-                                    alert("Error al guardar: " + (data.message || "desconocido"));
-                                }
-                            })
-                            .catch(error => {
-                                alert("Error en la solicitud");
-                                console.error(error);
-                            });
-                        }
-                    }
-
-                    // Función para obtener el token CSRF (requerido por Django)
-                    function getCookie(name) {
-                        let cookieValue = null;
-                        if (document.cookie && document.cookie !== '') {
-                            const cookies = document.cookie.split(';');
-                        for (let cookie of cookies) {
-                                cookie = cookie.trim();
-                                if (cookie.startsWith(name + '=')) {
-                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                    break;
-                                }
-                            }
-                        }
-                        return cookieValue;
-                    }
-                </script>
-
             </tbody>
         </table>
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if fecha_filtro %}&fecha={{ fecha_filtro }}{% endif %}{% if usuario_filtro %}&usuario={{ usuario_filtro }}{% endif %}{% if jornada_filtro %}&jornada={{ jornada_filtro }}{% endif %}">&laquo; Primera</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if fecha_filtro %}&fecha={{ fecha_filtro }}{% endif %}{% if usuario_filtro %}&usuario={{ usuario_filtro }}{% endif %}{% if jornada_filtro %}&jornada={{ jornada_filtro }}{% endif %}">Anterior</a>
+                {% endif %}
+
+                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if fecha_filtro %}&fecha={{ fecha_filtro }}{% endif %}{% if usuario_filtro %}&usuario={{ usuario_filtro }}{% endif %}{% if jornada_filtro %}&jornada={{ jornada_filtro }}{% endif %}">Siguiente</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if fecha_filtro %}&fecha={{ fecha_filtro }}{% endif %}{% if usuario_filtro %}&usuario={{ usuario_filtro }}{% endif %}{% if jornada_filtro %}&jornada={{ jornada_filtro }}{% endif %}">Última &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+
     </div>
 </body>
 </html>
