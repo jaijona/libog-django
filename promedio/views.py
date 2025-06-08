@@ -1,18 +1,20 @@
 
 from django.db.models.functions import TruncDate
+from django.db.models import Avg, DateField
 from datetime import datetime
 from usuarios.utils import login_requerido
 from .models import Promedio
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from modelos_app.models import ModeloRegistrado
 import openpyxl
 from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 from django.http import JsonResponse
 from promedio.utils import guardar_promedios 
-from django.views.decorators.csrf import csrf_exempt
+
 import os
-import json
+
 
 CLAVE_SECRETA = os.getenv("CLAVE_SECRETA")
 
@@ -28,19 +30,7 @@ def api_guardar_promedios(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
-@csrf_exempt  # solo si no tienes CSRF token, pero mejor manejarlo con token
-def actualizar_tokens(request, promedio_id):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            nuevo_valor = int(data.get("tokens"))
-            promedio = Promedio.objects.get(id=promedio_id)
-            promedio.tokens = nuevo_valor
-            promedio.save()
-            return JsonResponse({"status": "ok"})
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)})
-    return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+
 
 
 @login_requerido
@@ -54,15 +44,23 @@ def ver_promedios(request):
     usuario_filtro = request.GET.get('usuario')
     jornada_filtro = request.GET.get('jornada')
     
-
+    """
     # Aplicar filtro por fecha
     if fecha_filtro:
         try:
-            fecha_obj = datetime.strptime(fecha_filtro, '%Y-%m-%d').date()
-            datos = datos.filter(fecha=fecha_obj)
-        except ValueError:
-            pass  # Fecha inválida, ignorar
+            # Convertir el string a date
+            colombia_tz = pytz.timezone('America/Bogota')
+            fecha_base = datetime.strptime(fecha_filtro, '%Y-%m-%d')
 
+            # Crear rango completo del día con zona horaria
+            inicio = make_aware(datetime.combine(fecha_base, time.min),colombia_tz)  # 00:00:00
+            fin = make_aware(datetime.combine(fecha_base, time.max),colombia_tz)     # 23:59:59.999999
+
+            # Aplicar el filtro
+            datos = datos.filter(fecha__range=(inicio, fin))
+        except ValueError:
+            pass
+    """
     # Aplicar filtro por usuario
     if usuario_filtro:
         datos = datos.filter(id_modelo__usuario=usuario_filtro)
@@ -71,12 +69,17 @@ def ver_promedios(request):
     if jornada_filtro:
         datos = datos.filter(id_modelo__jornada=jornada_filtro)
 
+    # Paginación (15 por página)
+    paginator = Paginator(datos.order_by('-fecha'), 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     # Lista de usuarios para mostrar en el dropdown
     usuarios = ModeloRegistrado.objects.filter(studio_id=id_studio,estado=1).values_list('usuario', flat=True).distinct()
     jornada = ModeloRegistrado.objects.filter(studio_id=id_studio,estado=1).values_list('jornada', flat=True).distinct()
 
     context = {
-        'datos': datos.order_by('-fecha'),
+        'page_obj': page_obj,
         'usuarios': usuarios,
         'jornada': jornada,
         'fecha_filtro': fecha_filtro or '',
@@ -114,7 +117,7 @@ def exportar_excel(request):
     ws.title = "Promedios"
 
     # Encabezados
-    headers = ['Usuario', 'Jornada', 'Promedio', 'Tokens', 'Fecha']
+    headers = ['Usuario', 'Jornada', 'Promedio','Usuarios', 'Fecha']
     ws.append(headers)
 
     for item in datos:
@@ -122,7 +125,7 @@ def exportar_excel(request):
             item.id_modelo.usuario,
             item.id_modelo.jornada,
             item.promedio,
-            item.tokens,  # 👈 Aquí está
+            item.users,
             item.fecha.strftime('%Y-%m-%d')
         ])
 

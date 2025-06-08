@@ -8,9 +8,9 @@ class Promedio(models.Model):
     id_modelo = models.ForeignKey(ModeloRegistrado, db_column='id_modelo', on_delete=models.CASCADE)
     id_studio = models.IntegerField()
     promedio = models.FloatField()
-    tokens = models.IntegerField(default=0)
     contador = models.IntegerField()
-    fecha = models.DateField()
+    users = models.IntegerField(default=0)
+    fecha = models.DateTimeField()
 
     class Meta:
         managed = False  # <-- IMPORTANTE: Django no modificará esta tabla
