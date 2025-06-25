@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('studio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='usuarios.infostudio')),
             ],
             options={
-                'db_table': 'informacion',
+                'db_table': 'data_models',
                 'constraints': [models.UniqueConstraint(fields=('studio', 'usuario'), name='unique_usuario_por_studio')],
             },
         ),

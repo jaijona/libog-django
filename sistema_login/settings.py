@@ -80,14 +80,28 @@ WSGI_APPLICATION = 'sistema_login.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
+    #'default': {
+    #    'ENGINE': 'django.db.backends.mysql',
+    #    'NAME': 'ba69cotht6ptecop3sey',        # 👈 Cambia esto
+    #    'USER': 'uec39ms83p7pwccc',         # 👈 Cambia esto
+    #    'PASSWORD': 'gPDkaLJoBbQcrDD5xaLe',  # 👈 Cambia esto
+    #    'HOST': 'ba69cotht6ptecop3sey-mysql.services.clever-cloud.com',                # o IP del servidor MySQL
+    #    'PORT': '3306',                     # puerto por defecto de MySQL
+    #    'CONN_MAX_AGE': 60,  # o 300, según tu necesidad
+    #}
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ba69cotht6ptecop3sey',        # 👈 Cambia esto
-        'USER': 'uec39ms83p7pwccc',         # 👈 Cambia esto
-        'PASSWORD': 'gPDkaLJoBbQcrDD5xaLe',  # 👈 Cambia esto
-        'HOST': 'ba69cotht6ptecop3sey-mysql.services.clever-cloud.com',                # o IP del servidor MySQL
-        'PORT': '3306',                     # puerto por defecto de MySQL
+        'NAME': 'libog_data',        # 👈 Cambia esto
+        'USER': 'doadmin',         # 👈 Cambia esto
+        'PASSWORD': 'AVNS_sSHHxLG4_1wcJeWyrYe',  # 👈 Cambia esto
+        'HOST': 'libog-mysql-do-user-23452643-0.d.db.ondigitalocean.com',                # o IP del servidor MySQL
+        'PORT': '25060',                     # puerto por defecto de MySQL
         'CONN_MAX_AGE': 60,  # o 300, según tu necesidad
+        'OPTIONS': {
+            'ssl': {
+                'ca': 'C:/Users/Jonathan/Documents/LibogWeb/sistema_login/ca-certificate.crt'
+            }
+        }
     }
 }
 

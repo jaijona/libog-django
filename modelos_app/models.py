@@ -31,7 +31,7 @@ class ModeloRegistrado(models.Model):
     studio= models.ForeignKey(InfoStudio, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'informacion'
+        db_table = 'data_models'
         constraints = [
             models.UniqueConstraint(fields=['studio', 'usuario'], name='unique_usuario_por_studio')
         ]
