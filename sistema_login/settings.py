@@ -100,7 +100,7 @@ DATABASES = {
         'CONN_MAX_AGE': 60,  # o 300, según tu necesidad
         'OPTIONS': {
             'ssl': {
-                'ca': config('SSL_CA_PATH', default='sistema_login/certs/ca-certificate.crt')
+                'ca': config('SSL_CA_PATH', default='sistema_login\certs\ca-certificate.crt')
             }
         }
     }
