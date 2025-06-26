@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from decouple import config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -99,7 +100,7 @@ DATABASES = {
         'CONN_MAX_AGE': 60,  # o 300, según tu necesidad
         'OPTIONS': {
             'ssl': {
-                'ca': 'sistema_login/certs/ca-certificate.crt'
+                'ca': config('SSL_CA_PATH', default='sistema_login/certs/ca-certificate.crt')
             }
         }
     }
@@ -170,3 +171,6 @@ USE_TZ = True
 
 
 
+cert_path = os.path.join(BASE_DIR, config('SSL_CA_PATH'))
+print("🔍 Ruta del certificado SSL:", cert_path)
+print("📄 Existe el archivo?", os.path.isfile(cert_path))

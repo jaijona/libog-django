@@ -86,7 +86,7 @@ def actualizar_tabla(request):
     }
     html = render_to_string('posicion/tabla_modelos.html', context)
     return JsonResponse({'html': html})
-"""
+
 import requests
 import json
 import pandas as pd
@@ -257,6 +257,131 @@ def actualizar_tabla(request):
         'total_usuarios': total_usuarios,
         'hora_actualizacion': hora_actualizacion.time(),
 
+    }
+
+    html = render_to_string('posicion/tabla_modelos.html', context)
+    return JsonResponse({'html': html})
+"""
+import requests
+import json
+import pandas as pd
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from modelos_app.models import ModeloRegistrado as data_models
+from usuarios.utils import login_requerido
+from datetime import datetime
+from collections import defaultdict
+
+# ✅ Obtener los nombres de usuario de modelos activos en el estudio
+def obtener_modelos_deseados(id_studio):
+    return data_models.objects.filter(estado=1, studio_id=id_studio).values_list('usuario', flat=True)
+
+# ✅ Obtener datos de la API y filtrar solo los modelos deseados
+def obtener_datos_filtrados(id_studio):
+    try:
+        modelos_deseados = set(u.lower().strip() for u in obtener_modelos_deseados(id_studio))
+        print("Modelos deseados desde BD:", modelos_deseados)
+
+        url = "https://chaturbate.com/affiliates/api/onlinerooms/?format=json&wm=zXPBe"
+        respuesta = requests.get(url)
+
+        if respuesta.status_code != 200:
+            print("❌ Error al acceder a la API. Código:", respuesta.status_code)
+            return pd.DataFrame(), 0, 0, datetime.now()
+
+        datos = json.loads(respuesta.text)
+        print(f"✅ Total modelos recibidos desde la API: {len(datos)}")
+
+        filtrados = []
+        for idx, modelo in enumerate(datos):
+            username_api = modelo.get('username', '').lower().strip()
+
+            if username_api in modelos_deseados:
+                filtrados.append({
+                    'Posicion': idx + 1,
+                    'Modelo': modelo['username'],
+                    'Estado': modelo.get('current_show', 'unknown'),
+                    'Usuarios': modelo.get('num_users', 0),
+                    'Seguidores': modelo.get('num_followers', 0),
+                    'Online': round(modelo.get('seconds_online', 0) / 60, 1),
+                    'Tags': ', '.join(modelo.get('tags', [])),
+                })
+
+        num_modelos = len(datos)
+        total_usuarios = sum(m.get('num_users', 0) for m in datos)
+        hora_actualizacion = datetime.now()
+
+        tags_deseados = set()
+        for modelo in datos:
+            username = modelo.get('username', '').lower().strip()
+            if username in modelos_deseados:
+                tags_deseados.update(tag.strip().lower() for tag in modelo.get('tags', []))
+
+        conteo_tags = defaultdict(int)
+        for modelo in datos:
+            tags_modelo = [tag.strip().lower() for tag in modelo.get('tags', [])]
+            for tag in tags_deseados.intersection(tags_modelo):
+                conteo_tags[tag] += 1
+
+        modelos_por_tag = defaultdict(list)
+        for idx, modelo in enumerate(datos):
+            username = modelo.get('username', '')
+            for tag in modelo.get('tags', []):
+                modelos_por_tag[tag.strip().lower()].append((idx, username))
+
+        for modelo in filtrados:
+            nombre = modelo['Modelo'].lower()
+            tags = [tag.strip().lower() for tag in modelo['Tags'].split(',') if tag.strip()]
+            tags_html = []
+            for tag in tags:
+                lista_modelos_tag = modelos_por_tag.get(tag, [])
+                total = len(lista_modelos_tag)
+                posiciones = [user.lower() for _, user in lista_modelos_tag]
+                posicion = posiciones.index(nombre) + 1 if nombre in posiciones else 'N/A'
+                tooltip = f"{tag}: {total} modelo(s), posición {posicion}"
+                tags_html.append(f'<span title="{tooltip}">{tag}</span>')
+            modelo['Tags'] = ', '.join(tags_html)
+
+        return pd.DataFrame(filtrados), num_modelos, total_usuarios, hora_actualizacion
+
+    except Exception as e:
+        print("❗ Error al procesar datos de la API:", e)
+        return pd.DataFrame(), 0, 0, datetime.now()
+
+
+# ✅ Vista principal que muestra los datos
+@login_requerido
+def mostrar_datos(request):
+    id_studio = request.session.get('id_studio')
+    df, num_modelos, total_usuarios, hora_actualizacion = obtener_datos_filtrados(id_studio)
+    print("🔍 ID studio recibido:", id_studio)
+
+    context = {
+        'modelos': df.to_dict(orient='records'),
+        'total_modelos': num_modelos,
+        'total_usuarios': total_usuarios,
+        'hora_actualizacion': hora_actualizacion.time(),
+    }
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        html = render_to_string('posicion/tabla_modelos.html', context, request=request)
+        return JsonResponse({'html': html})
+
+    return render(request, 'posicion/mostrar_datos.html', context)
+
+
+# ✅ Vista usada para actualizar la tabla dinámicamente
+@login_requerido
+def actualizar_tabla(request):
+    id_studio = request.session.get('id_studio')
+    df, num_modelos, total_usuarios, hora_actualizacion = obtener_datos_filtrados(id_studio)
+
+    context = {
+        'modelos': df.to_dict(orient='records'),
+        'total_modelos': num_modelos,
+        'total_usuarios': total_usuarios,
+        'hora_actualizacion': hora_actualizacion.time(),
     }
 
     html = render_to_string('posicion/tabla_modelos.html', context)
