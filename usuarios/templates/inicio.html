@@ -70,9 +70,11 @@
     <link rel="stylesheet" href="{% static 'usuarios/css/inicio.css' %}">
 </head>
 <body>
+    <!--
     <h1>Bienvenido, usuario {{ usuario.username }}</h1>
     <h1>Bienvenido, usuario {{ usuario.cargo }}</h1>
-    <h1>Bienvenido, usuario {{ usuario_id }}</h1>
+    <h1>Bienvenido, usuario {{ usuario_id }}</h1> -->
+    <h1>Bienvenido {{ usuario.name  }}</h1>
     {% if usuario_id %}
         <h2>Selecciona una opción:</h2>
         {% if usuario.cargo == 'admin' %}

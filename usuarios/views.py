@@ -22,6 +22,7 @@ def login_usuario(request):
                 request.session['usuario_id'] = usuario.id
                 request.session['id_studio'] = usuario.id_studio
                 request.session['cargo'] = usuario.cargo
+                request.session['name'] = usuario.name
                 return redirect('inicio')
             else:
                 messages.error(request, 'Contraseña incorrecta')
@@ -37,8 +38,9 @@ def inicio(request):
     
     usuario_id = request.session.get('usuario_id')
     id_studio = request.session.get('id_studio')
+    name = request.session.get('name')
     usuario = InfoStudio.objects.get(id=usuario_id)
-    return render(request, 'inicio.html', {'usuario': usuario, 'usuario_id':usuario_id,'id_studio':id_studio})
+    return render(request, 'inicio.html', {'usuario': usuario, 'usuario_id':usuario_id,'id_studio':id_studio,'name':name})
 
 def logout_usuario(request):
     

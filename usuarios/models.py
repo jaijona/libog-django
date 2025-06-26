@@ -6,6 +6,7 @@ class InfoStudio(models.Model):
     cargo = models.CharField(max_length=150)
     id_studio = models.IntegerField()
     id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=150)
 
     class Meta:
         db_table = 'info_users'  # 👈 Esto conecta directamente con tu tabla existente
