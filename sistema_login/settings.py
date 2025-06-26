@@ -99,7 +99,7 @@ DATABASES = {
         'CONN_MAX_AGE': 60,  # o 300, según tu necesidad
         'OPTIONS': {
             'ssl': {
-                'ca': 'C:/Users/Jonathan/Documents/LibogWeb/sistema_login/ca-certificate.crt'
+                'ca': 'sistema_login/certs/ca-certificate.crt'
             }
         }
     }
