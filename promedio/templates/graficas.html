@@ -1,0 +1,471 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráficas del Modelo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        
+        .formulario-container {
+            flex: 0 0 30%;
+            max-width: 30%;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+        .graficas-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .grafica-section {
+            flex: 1 1 45%;
+            min-width: 400px;
+        }
+
+        .grafica-container {
+            width: 100%;
+        }
+        .graficat-container {
+            max-width: 400px;
+            /*margin: auto;*/
+        }
+
+        #graficaTortaTokens {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+
+ 
+    </style>
+
+
+</head>
+<body>
+    <h1>Gráficas del Modelo</h1>
+    <div class="mb-4">
+        <label for="modeloGlobal">Modelo:</label>
+        <select id="modeloGlobal" name="modelo">
+            {% for modelo in modelos %}
+                <option value="{{ modelo.id }}">{{ modelo.usuario }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!--
+    <div class="graficas-flex">
+        <form id="form-dia">
+            <label>Modelo:</label>
+            <select name="modelo" required>
+                {% for modelo in modelos %}
+                    <option value="{{ modelo.id }}">{{ modelo.usuario }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Fecha:</label>
+            <input type="date" name="fecha" required>
+
+            <button type="submit">Ver gráfica</button>
+        </form>
+
+        <div class="grafica-container">
+            <h2>📊 Posición y Usuarios vs. Hora</h2>
+            <canvas id="graficaDia"></canvas>
+        </div>
+    </div>
+    -->
+    <div class="graficas-flex">
+
+        <div class="grafica-section">
+            <form id="form-dia">
+                <!--<label>Modelo:</label>
+                <select name="modelo" required>
+                    {% for modelo in modelos %}
+                        <option value="{{ modelo.id }}">{{ modelo.usuario }}</option>
+                    {% endfor %}
+                </select>-->
+
+                <label>Fecha:</label>
+                <input type="date" name="fecha" required>
+
+                <button type="submit">Ver gráfica</button>
+            </form>
+
+            <div class="grafica-container">
+                <h2>📊 Posición y Usuarios vs. Hora</h2>
+                <canvas id="graficaDia"></canvas>
+            </div>
+        </div>
+
+        <div class="grafica-section">
+            <form id="form-semana">
+               <!-- <label>Modelo:</label>
+                <select name="modelo" required>
+                    {% for modelo in modelos %}
+                        <option value="{{ modelo.id }}">{{ modelo.usuario }}</option>
+                    {% endfor %}
+                </select>
+                -->
+                <label>Fecha inicio (lunes):</label>
+                <input type="date" name="fecha_inicio" required>
+
+                <button type="submit">Ver semana</button>
+            </form>
+
+            <div class="grafica-container">
+                <h2>📅 Promedio semanal vs Día</h2>
+                <canvas id="graficaSemana"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    let graficaDia;
+
+    document.getElementById('form-dia').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const modelo = document.getElementById('modeloGlobal').value;  // 👈 modelo global
+        formData.append('modelo', modelo);  // 👈 agregarlo al form
+        const params = new URLSearchParams(formData).toString();
+
+        fetch(`/api/datos-dia/?${params}`)
+            .then(res => res.json())
+            .then(data => {
+                if (graficaDia) {
+                    graficaDia.destroy();
+                }
+
+                const ctx = document.getElementById('graficaDia').getContext('2d');
+                graficaDia = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.horas,
+                        datasets: [
+                            {
+                                label: 'Posición promedio',
+                                data: data.posiciones,
+                                borderColor: 'blue',
+                                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                                tension: 0.3,
+                                yAxisID: 'y1',
+                                fill: true
+
+                            },
+                            {
+                                label: 'Usuarios en sala',
+                                data: data.usuarios,
+                                borderColor: 'green',
+                                backgroundColor: 'rgba(0, 128, 0, 0.1)',
+                                tension: 0.3,
+                                yAxisID: 'y2',
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        stacked: false,
+                        scales: {
+                            y1: {
+                                type: 'linear',
+                                position: 'left',
+                                reverse: true,
+                                title: {
+                                    display: true,
+                                    text: 'Posición'
+                                }
+                            },
+                            y2: {
+                                type: 'linear',
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Usuarios'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Hora'
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+    });
+    </script>
+<!--
+    <div class="graficas-flex">
+        <form id="form-semana">
+            <label>Modelo:</label>
+            <select name="modelo" required>
+                {% for modelo in modelos %}
+                    <option value="{{ modelo.id }}">{{ modelo.usuario }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Fecha inicio (lunes):</label>
+            <input type="date" name="fecha_inicio" required>
+
+            <button type="submit">Ver semana</button>
+        </form>
+
+        <div class="grafica-container">
+            <h2>📅 Promedio semanal vs Día</h2>
+            <canvas id="graficaSemana"></canvas>
+        </div>
+    </div>
+    -->
+    <script>
+    let graficaSemana;
+
+    document.getElementById('form-semana').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const modelo = document.getElementById('modeloGlobal').value;  // 👈 modelo global
+        formData.append('modelo', modelo);  // 👈 agregarlo al form
+        const params = new URLSearchParams(formData).toString();
+
+        fetch(`/api/datos-semana/?${params}`)
+            .then(res => res.json())
+            .then(data => {
+                if (graficaSemana) {
+                    graficaSemana.destroy();
+                }
+
+                const ctx = document.getElementById('graficaSemana').getContext('2d');
+                graficaSemana = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dias,
+                        datasets: [
+                            {
+                                label: 'Posición promedio',
+                                data: data.posiciones,
+                                borderColor: 'blue',
+                                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                                tension: 0.3,
+                                yAxisID: 'y1',
+                                fill: true
+                            },
+                            {
+                                label: 'Usuarios promedio',
+                                data: data.usuarios,
+                                borderColor: 'orange',
+                                backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                                tension: 0.3,
+                                yAxisID: 'y2',
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        stacked: false,
+                        scales: {
+                            y1: {
+                                type: 'linear',
+                                position: 'left',
+                                reverse: true,
+                                title: {
+                                    display: true,
+                                    text: 'Posición'
+                                }
+                            },
+                            y2: {
+                                type: 'linear',
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Usuarios'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Día'
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+    });
+    </script>
+    <script>
+    document.querySelector('input[name="fecha_inicio"]').addEventListener('change', function () {
+        const fecha = new Date(this.value);
+        if (!isNaN(fecha)) {
+            const fechaFin = new Date(fecha);
+            fechaFin.setDate(fecha.getDate() + 6);
+            const fechaFinStr = fechaFin.toISOString().split('T')[0];
+            console.log("Fecha fin de semana:", fechaFinStr);
+            // Puedes mostrarla si quieres en algún <span> o input hidden
+        }
+    });
+    </script>
+
+    <div class="contenedor-flex">
+        <form id="form-tokens">
+         <!-- <label>Modelo:</label>
+          <select name="modelo" required>
+             {% for modelo in modelos %}
+                <option value="{{ modelo.id }}">{{ modelo.usuario }}</option>
+            {% endfor %}
+            </select>
+            -->
+            <label>Fecha:</label>
+            <input type="date" name="fecha" required>
+
+            <button type="submit">Ver Tokens</button>
+        </form>
+
+        <div class="graficat-container">
+            <h2>🎯 Distribución de Tokens</h2>
+            <canvas id="graficaTortaTokens"></canvas>
+        </div>
+    </div>
+
+    <script>
+    let graficaTortaTokens;
+
+    document.getElementById('form-tokens').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const modelo = document.getElementById('modeloGlobal').value;  // 👈 modelo global
+        formData.append('modelo', modelo);  // 👈 agregarlo al form
+        const params = new URLSearchParams(formData).toString();
+
+        fetch(`/api/tokens-dia/?${params}`)
+            .then(res => res.json())
+            .then(data => {
+            if (graficaTortaTokens) {
+                graficaTortaTokens.destroy();
+            }
+
+            const ctx = document.getElementById('graficaTortaTokens').getContext('2d');
+            graficaTortaTokens = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                labels: data.labels,
+                datasets: [{
+                    data: data.valores,
+                    backgroundColor: ['#60a5fa', '#fbbf24'],
+                }]
+                },
+                options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                        return `${context.label}: ${context.raw} tokens`;
+                        }
+                    }
+                    }
+                }
+                }
+            });
+            });
+        });
+        </script>
+    
+    
+    <!-- Formulario para elegir semana -->
+    <form id="form-tokens-semana">
+        <!--<label>Modelo:</label>
+        <select name="modelo" required>
+            {% for modelo in modelos %}
+            <option value="{{ modelo.id }}">{{ modelo.usuario }}</option>
+            {% endfor %}
+        </select> -->
+
+        <label>Fecha inicio (lunes):</label>
+        <input type="date" name="fecha_inicio" required>
+
+        <button type="submit">Ver tokens semana</button>
+    </form>
+
+    <!-- Contenedor de la gráfica -->
+    <div class="grafica-container" style="max-width: 400px; margin-top: 20px;">
+        <h2>🍰 Tokens por Semana</h2>
+        <canvas id="graficaTortaTokensSemana"></canvas>
+    </div>
+
+    <script>
+    let graficaTortaTokensSemana;
+
+    document.getElementById('form-tokens-semana').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const modelo = document.getElementById('modeloGlobal').value;  // 👈 modelo global
+        formData.append('modelo', modelo);  // 👈 agregarlo al form
+        const params = new URLSearchParams(formData).toString();
+
+        fetch(`/api/tokens-semana/?${params}`)
+            .then(res => res.json())
+            .then(data => {
+            if (graficaTortaTokensSemana) graficaTortaTokensSemana.destroy();
+
+            const ctx = document.getElementById('graficaTortaTokensSemana').getContext('2d');
+            graficaTortaTokensSemana = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.valores,
+                        backgroundColor: ['#60a5fa', '#fbbf24'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw} tokens`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    });
+    </script>
+
+
+</body>
+</html>

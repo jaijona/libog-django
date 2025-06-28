@@ -12,6 +12,15 @@ from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 from django.http import JsonResponse
 from promedio.utils import guardar_promedios 
+from django.utils.timezone import make_aware
+from datetime import datetime,timedelta
+from ingresos_tokens.models import IngresoTokens
+from django.db.models import Sum
+
+
+
+
+
 
 import os
 
@@ -139,3 +148,189 @@ def exportar_excel(request):
     response['Content-Disposition'] = 'attachment; filename=promedios_filtrados.xlsx'
     wb.save(response)
     return response
+
+
+####
+####
+# INICIO DE FUNCIONES DE GRAFICACION
+####
+####
+
+def obtener_datos_semana(request):
+    modelo_id = request.GET.get('modelo')
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+
+    if not (modelo_id and fecha_inicio_str):
+        return JsonResponse({'error': 'Faltan parámetros'}, status=400)
+
+    try:
+        fecha_inicio = datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
+        fecha_fin = fecha_inicio + timedelta(days=6)
+
+        inicio = make_aware(datetime.combine(fecha_inicio, datetime.min.time()))
+        fin = make_aware(datetime.combine(fecha_fin, datetime.max.time()))
+
+        semana = (
+            Promedio.objects
+            .filter(id_modelo_id=modelo_id, fecha__range=(inicio, fin))
+            .annotate(dia=TruncDate('fecha'))
+            .values('dia')
+            .annotate(avg_pos=Avg('promedio'), avg_users=Avg('users'))
+            .order_by('dia')
+        )
+
+        dias = [s['dia'].strftime("%a %d") for s in semana]
+        posiciones = [round(s['avg_pos'], 2) for s in semana]
+        usuarios = [round(s['avg_users'], 1) for s in semana]
+
+        return JsonResponse({
+            'dias': dias,
+            'posiciones': posiciones,
+            'usuarios': usuarios,
+            'fecha_inicio': fecha_inicio_str,
+            'fecha_fin': fecha_fin.strftime('%Y-%m-%d')
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def obtener_datos_dia(request):
+    modelo_id = request.GET.get('modelo')
+    fecha_str = request.GET.get('fecha')
+
+    if not (modelo_id and fecha_str):
+        return JsonResponse({'error': 'Faltan parámetros'}, status=400)
+
+    try:
+        fecha = datetime.strptime(fecha_str, '%Y-%m-%d')
+        inicio = make_aware(datetime.combine(fecha, datetime.min.time()))
+        fin = make_aware(datetime.combine(fecha, datetime.max.time()))
+
+        registros = (
+            Promedio.objects
+            .filter(id_modelo_id=modelo_id, fecha__range=(inicio, fin))
+            .order_by('fecha')
+        )
+
+        horas = [r.fecha.strftime('%H:%M') for r in registros]
+        posiciones = [r.promedio for r in registros]
+        usuarios = [r.users for r in registros]
+
+        return JsonResponse({
+            'horas': horas,
+            'posiciones': posiciones,
+            'usuarios': usuarios
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_requerido
+def graficas_modelo(request):
+    id_studio = request.session.get("id_studio")
+
+    # Obtener filtros GET
+    modelo_id = request.GET.get("modelo")
+    fecha_str = request.GET.get("fecha")
+
+    modelos = ModeloRegistrado.objects.filter(studio_id=id_studio, estado=1)
+
+    registros = []
+    horas, posiciones, usuarios = [], [], []
+
+    if modelo_id and fecha_str:
+        fecha = datetime.strptime(fecha_str, "%Y-%m-%d")
+        inicio = make_aware(datetime.combine(fecha, datetime.min.time()))
+        fin = make_aware(datetime.combine(fecha, datetime.max.time()))
+
+        registros = Promedio.objects.filter(
+            id_modelo_id=modelo_id,
+            fecha__range=(inicio, fin)
+        ).order_by('fecha')
+
+        horas = [r.fecha.strftime("%H:%M") for r in registros]
+        posiciones = [r.promedio for r in registros]
+        usuarios = [r.users for r in registros]
+
+    context = {
+        'modelos': modelos,
+        'modelo_seleccionado': int(modelo_id) if modelo_id else None,
+        'fecha_str': fecha_str,
+        'horas': horas,
+        'posiciones': posiciones,
+        'usuarios': usuarios,
+    }
+
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin')
+
+    dias_semana, promedios_semana, usuarios_semana = [], [], []
+    print("Modelo ID:", modelo_id)
+    if modelo_id and fecha_inicio_str and fecha_fin_str:
+        fecha_inicio = make_aware(datetime.strptime(fecha_inicio_str, "%Y-%m-%d"))
+        fecha_fin = make_aware(datetime.strptime(fecha_fin_str, "%Y-%m-%d"))
+        
+        semana = (
+            Promedio.objects
+            .filter(id_modelo_id=modelo_id, fecha__range=(fecha_inicio, fecha_fin))
+            .annotate(dia=TruncDate('fecha'))
+            .values('dia')
+            .annotate(avg_pos=Avg('promedio'), avg_users=Avg('users'))
+            .order_by('dia')
+        )
+
+        dias_semana = [s['dia'].strftime("%a %d") for s in semana]
+        promedios_semana = [round(s['avg_pos'], 2) for s in semana]
+        usuarios_semana = [round(s['avg_users'], 1) for s in semana]
+    
+    context.update({
+        'fecha_inicio': fecha_inicio_str,
+        'fecha_fin': fecha_fin_str,
+        'dias_semana': dias_semana,
+        'promedios_semana': promedios_semana,
+        'usuarios_semana': usuarios_semana,
+    })
+    return render(request, 'graficas.html', context)
+
+def tokens_por_dia(request):
+    modelo_id = request.GET.get('modelo')
+    fecha = request.GET.get('fecha')
+
+    tokens = IngresoTokens.objects.filter(id_modelo=modelo_id, fecha=fecha)
+
+    total_cb = sum(t.token_cb for t in tokens)
+    total_otro = sum(t.token_otro for t in tokens)
+
+    return JsonResponse({
+        'labels': ['Token CB', 'Token Otro'],
+        'valores': [total_cb, total_otro]
+    })
+
+def tokens_semana_view(request):
+    modelo_id = request.GET.get('modelo')
+    fecha_inicio = request.GET.get('fecha_inicio')
+
+    if not modelo_id or not fecha_inicio:
+        return JsonResponse({'error': 'Faltan parámetros'}, status=400)
+
+    fecha_inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
+    fecha_fin = fecha_inicio + timedelta(days=6)
+
+    tokens = IngresoTokens.objects.filter(
+        id_modelo=modelo_id,
+        fecha__range=(fecha_inicio, fecha_fin)
+    ).aggregate(
+        total_cb=Sum('token_cb'),
+        total_otro=Sum('token_otro')
+    )
+
+    return JsonResponse({
+        'labels': ['Token CB', 'Token Otro'],
+        'valores': [tokens['total_cb'] or 0, tokens['total_otro'] or 0]
+    })
+
+    
+
+
+    
+
