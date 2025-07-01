@@ -5,7 +5,7 @@ import pytz
 
 from django.db import connection  # ✅ Importar esto
 from modelos_app.models import ModeloRegistrado
-from promedio.models import Promedio
+from promedio.models import Promedio,DataAllUseStr
 
 def guardar_promedios():
     url = "https://chaturbate.com/affiliates/api/onlinerooms/?format=json&wm=zXPBe"
@@ -17,6 +17,70 @@ def guardar_promedios():
             return
 
         data = json.loads(response.text)
+
+
+
+        # Zona horaria Colombia
+        colombia_tz = pytz.timezone("America/Bogota")
+        ahora = datetime.now(colombia_tz)
+        hora_actual = ahora.replace(minute=0, second=0, microsecond=0)
+
+        # Contadores
+        total = len(data)
+        fem = sum(1 for m in data if m.get("gender") == "f")
+        male = sum(1 for m in data if m.get("gender") == "m")
+        tra = sum(1 for m in data if m.get("gender") == "s")
+        cou = sum(1 for m in data if m.get("gender") == "c")
+
+        users_all = sum(m.get("num_users", 0) for m in data)
+        users_fem = sum(m.get("num_users", 0) for m in data if m.get("gender") == "f")
+        users_male = sum(m.get("num_users", 0) for m in data if m.get("gender") == "m")
+        users_tra = sum(m.get("num_users", 0) for m in data if m.get("gender") == "s")
+        users_cou = sum(m.get("num_users", 0) for m in data if m.get("gender") == "c")
+
+        # Ver si ya hay registro en esa hora
+        registro_existente = DataAllUseStr.objects.filter(fecha=hora_actual).first()
+        print("Guardando con fecha:", hora_actual)
+        if registro_existente:
+            nuevo_contador = registro_existente.contador + 1
+
+            # Promediar STREAMS
+            registro_existente.strea_all = ((registro_existente.strea_all * registro_existente.contador) + total) / nuevo_contador
+            registro_existente.strea_fem = ((registro_existente.strea_fem * registro_existente.contador) + fem) / nuevo_contador
+            registro_existente.strea_male = ((registro_existente.strea_male * registro_existente.contador) + male) / nuevo_contador
+            registro_existente.strea_tra = ((registro_existente.strea_tra * registro_existente.contador) + tra) / nuevo_contador
+            registro_existente.strea_cou = ((registro_existente.strea_cou * registro_existente.contador) + cou) / nuevo_contador
+
+            # Promediar USERS
+            registro_existente.users_all = ((registro_existente.users_all * registro_existente.contador) + users_all) / nuevo_contador
+            registro_existente.users_fem = ((registro_existente.users_fem * registro_existente.contador) + users_fem) / nuevo_contador
+            registro_existente.users_male = ((registro_existente.users_male * registro_existente.contador) + users_male) / nuevo_contador
+            registro_existente.users_tra = ((registro_existente.users_tra * registro_existente.contador) + users_tra) / nuevo_contador
+            registro_existente.users_cou = ((registro_existente.users_cou * registro_existente.contador) + users_cou) / nuevo_contador
+
+            registro_existente.contador = nuevo_contador
+            registro_existente.save()
+
+        else:
+            # Crear nuevo registro si no existe
+            DataAllUseStr.objects.create(
+                fecha=hora_actual,
+                strea_all=total,
+                strea_fem=fem,
+                strea_male=male,
+                strea_tra=tra,
+                strea_cou=cou,
+
+                users_all=users_all,
+                users_fem=users_fem,
+                users_male=users_male,
+                users_tra=users_tra,
+                users_cou=users_cou,
+                contador=1
+            )
+
+
+
         studio_ids = ModeloRegistrado.objects.values_list('studio_id', flat=True).distinct()
 
         for studio_id in studio_ids:
@@ -36,7 +100,7 @@ def guardar_promedios():
                         hora_actual = ahora.replace(minute=0, second=0, microsecond=0)
 
                         users_count = modelo.get("num_users", 0)
-
+                        print("Guardando con fechat:", hora_actual)
                         # Filtro exacto por hora
                         promedio_existente = Promedio.objects.filter(
                             id_modelo=modelo_registrado,
