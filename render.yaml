@@ -1,11 +1,16 @@
+
+
 #services:
 #  - type: web
 #    name: libog-django
 #    env: python
 #    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
 #    startCommand: "gunicorn sistema_login.wsgi:application"
-#    region: oregon  # Puedes cambiar la región si estás en otro país
+#    region: oregon
 #    plan: free
+#    build:
+#      environment:
+#        PYTHON_VERSION: 3.11
 
 services:
   - type: web
@@ -15,6 +20,11 @@ services:
     startCommand: "gunicorn sistema_login.wsgi:application"
     region: oregon
     plan: free
-    build:
-      environment:
-        PYTHON_VERSION: 3.11
+
+  - type: cron
+    name: libog-cronjob
+    env: python
+    schedule: "*/3 * * * *"  # Cada 5 minutos
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python cron_jobs/mi_script.py"
+    plan: starter  # Esto ya es de pago (por minutos)
