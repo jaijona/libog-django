@@ -1,0 +1,40 @@
+[build-system]
+requires = [
+    "setuptools>=68.0.0",
+    "wheel>=0.40.0",
+    "pip>=23.0.0"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sistema_login"
+version = "1.0.0"
+description = "Sistema para gestión de promedios con Django"
+authors = [
+    {name = "Tu Nombre", email = "tu@email.com"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+
+dependencies = [
+    "Django>=5.0",
+    "mysql-connector-python>=8.0.33",
+    "requests>=2.28.0",
+    "python-decouple>=3.8",
+    "APScheduler>=3.11.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-django>=4.5.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["sistema_login*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+"sistema_login.promedio" = ["*.json", "*.sql"]
