@@ -170,5 +170,5 @@ TIME_ZONE = 'America/Bogota'
 USE_TZ = True
 
 
-
+CRON_TOKEN = "mi_token_seguro_123"
 

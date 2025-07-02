@@ -17,6 +17,10 @@ from datetime import datetime,timedelta
 from ingresos_tokens.models import IngresoTokens
 from django.db.models import Sum
 
+from django.core.management import call_command
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
 
 
 
@@ -332,5 +336,12 @@ def tokens_semana_view(request):
     
 
 
-    
+@csrf_exempt
+def ejecutar_guardar_promedios(request):
+    # Autenticación básica por token GET (puedes mejorar esto)
+    if request.GET.get("token") != settings.CRON_TOKEN:
+        return JsonResponse({"error": "No autorizado"}, status=403)
+
+    call_command("guardar_promedios")
+    return JsonResponse({"status": "Comando ejecutado correctamente"})
 
