@@ -28,12 +28,13 @@ class ModeloRegistrado(models.Model):
     fecha = models.DateField(default=timezone.now)
     estado = models.IntegerField(default=1)
     id_monitor = models.IntegerField(default=0)
+    usuario_strip = models.CharField(max_length=100,default=0)
     studio= models.ForeignKey(InfoStudio, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'data_models'
         constraints = [
-            models.UniqueConstraint(fields=['studio', 'usuario'], name='unique_usuario_por_studio')
+            models.UniqueConstraint(fields=['studio', 'usuario','usuario_strip'], name='unique_usuario_por_studio')
         ]
         #ordering = ['-fecha_registro']
 

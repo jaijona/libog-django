@@ -148,7 +148,9 @@
         <p><label for="id_nombre">Nombre:</label> {{ form.nombre }}</p>
     
         <!-- Usuario lo dejamos igual porque no lo estamos editando en la modificación -->
-        <p><label for="id_usuario">Usuario:</label> {{ form.usuario }}</p>
+        <p><label for="id_usuario">Usuario Chaturbate:</label> {{ form.usuario }}</p>
+
+        <p><label for="id_usuario_strip">Usuario StripChat:</label> {{ form.usuario_strip }}</p>
     
         <!-- Jornada como una lista desplegable con scroll -->
         <p><label for="id_jornada">Jornada:</label>
@@ -164,9 +166,10 @@
         <!-- Género como una lista desplegable con scroll -->
         <p><label for="id_genero">Género:</label>
             <select name="genero" id="id_genero" size="1">  <!-- size="5" para 5 opciones visibles con scroll -->
-                <option value="masculino" {% if form.genero.value == 'masculino' %}selected{% endif %}>Masculino</option>
-                <option value="femenino" {% if form.genero.value == 'femenino' %}selected{% endif %}>Femenino</option>
-                <option value="otro" {% if form.genero.value == 'otro' %}selected{% endif %}>Otro</option>
+                <option value="Mujer" {% if form.genero.value == 'mujer' %}selected{% endif %}>Femenino</option>
+                <option value="Hombre" {% if form.genero.value == 'hombre' %}selected{% endif %}>Masculino</option>
+                <option value="Pareja" {% if form.genero.value == 'pareja' %}selected{% endif %}>Pareja</option>
+                <option value="Trans" {% if form.genero.value == 'trans' %}selected{% endif %}>Trans</option>
                 <!-- Agregar más opciones según tu necesidad -->
             </select>
         </p>
@@ -196,7 +199,8 @@
         <tr>
             <!--<th>ID</th> -->
             <th>Nombre</th>
-            <th>Usuario</th>
+            <th>Usuario CB</th>
+            <th>Usuario Strip</th>
             <th>Jornada</th>
             <th>Género</th>
             <th>Seleccionar</th>
@@ -206,18 +210,20 @@
             <!--<td>{{ modelo.id }}</td>-->
             <td>{{ modelo.nombre }}</td>
             <td>{{ modelo.usuario }}</td>
+            <td>{{ modelo.usuario_strip }}</td>
             <td>{{ modelo.jornada }}</td>
             <td>{{ modelo.genero }}</td>
-            <td><button onclick="seleccionar('{{ modelo.id }}', '{{ modelo.nombre }}', '{{ modelo.usuario }}', '{{ modelo.jornada }}', '{{ modelo.genero }}')">Select</button></td>
+            <td><button onclick="seleccionar('{{ modelo.id }}', '{{ modelo.nombre }}', '{{ modelo.usuario }}', '{{ modelo.usuario_strip }}', '{{ modelo.jornada }}', '{{ modelo.genero }}')">Select</button></td>
         </tr>
         {% endfor %}
     </table>
 
     <script>
-        function seleccionar(id, nombre, usuario, jornada, genero) {
+        function seleccionar(id, nombre, usuario,usuario_strip, jornada, genero) {
             document.getElementById('modelo_id').value = id;
             document.getElementsByName('nombre')[0].value = nombre;
             document.getElementsByName('usuario')[0].value = usuario;
+            document.getElementsByName('usuario_strip')[0].value = usuario_strip;
             document.getElementsByName('jornada')[0].value = jornada;
             document.getElementsByName('genero')[0].value = genero;
         }

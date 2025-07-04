@@ -52,8 +52,8 @@ class ModeloRegistradoForm(forms.ModelForm):
     def __init__(self, *args, studio_id=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.studio_id = studio_id
-        if self.instance and self.instance.pk:
-            self.fields.pop('usuario', None)
+        #if self.instance and self.instance.pk:
+        #    self.fields.pop('usuario', None)
 
     
 
@@ -73,4 +73,4 @@ class ModeloRegistradoForm(forms.ModelForm):
 
     class Meta:
         model = ModeloRegistrado
-        fields = ['nombre', 'usuario', 'jornada', 'genero']
+        fields = ['nombre', 'usuario', 'usuario_strip', 'jornada', 'genero']
