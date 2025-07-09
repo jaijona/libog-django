@@ -169,6 +169,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Carpeta donde Django los 
 TIME_ZONE = 'America/Bogota'
 USE_TZ = True
 
-
+#token del cronjob
 CRON_TOKEN = "qwertyPANAMA9876"
 

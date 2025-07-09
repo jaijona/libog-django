@@ -7,6 +7,12 @@ from modelos_app.models import ModeloRegistrado as data_models
 from usuarios.utils import login_requerido
 from datetime import datetime
 
+
+from django.core.management import call_command
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+
 # ✅ Obtener los nombres de usuario de modelos activos en el estudio (usuario_strip)
 def obtener_modelos_stripchat(id_studio):
     return data_models.objects.filter(estado=1, studio_id=id_studio).values_list('usuario_strip', flat=True)
@@ -149,3 +155,13 @@ def actualizar_tabla_stripchat(request):
 
     html = render_to_string("posicion_strip/tabla_modelos_stripchat.html", context)
     return JsonResponse({"html": html})
+
+
+@csrf_exempt
+def ejecutar_guardar_promedios_stripchat(request):
+    # Autenticación básica por token GET (puedes mejorar esto)
+    if request.GET.get("token") != settings.CRON_TOKEN:
+        return JsonResponse({"error": "No autorizado"}, status=403)
+
+    call_command("guardar_promedios_stripchat")
+    return JsonResponse({"status": "Comando ejecutado correctamente"})
