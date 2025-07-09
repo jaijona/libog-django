@@ -5,7 +5,7 @@ from modelos_app.models import ModeloRegistrado
 class IngresoTokensForm(forms.ModelForm):
     class Meta:
         model = IngresoTokens
-        fields = ['id_modelo', 'fecha', 'token_cb', 'token_otro']
+        fields = ['id_modelo', 'fecha', 'token_cb', 'token_strip']
         widgets = {
             'fecha': forms.DateInput(attrs={'type': 'date'}),
         }

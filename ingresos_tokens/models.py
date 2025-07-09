@@ -10,7 +10,7 @@ class IngresoTokens(models.Model):
     )
     id_studio = models.PositiveIntegerField(default=0)
     token_cb = models.PositiveIntegerField(default=0)
-    token_otro = models.PositiveIntegerField(default=0)
+    token_strip = models.PositiveIntegerField(default=0)
     promedio_posicion = models.FloatField(null=True, blank=True)  # ← Nuevo campo
     usuarios = models.FloatField(null=True, blank=True) # ← Nuevo campo
     fecha = models.DateField()

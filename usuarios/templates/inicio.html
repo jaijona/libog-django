@@ -83,7 +83,8 @@
             <a href="{% url 'registro_monitores' %}"><button>Registro Monitores</button></a>
         {% endif %}
 
-        <button onclick="abrirVentanaPopup()" class="btn btn-primary">Tabla de Posiciones</button>
+        <button onclick="abrirVentanaPopup()" class="btn btn-primary">Monitoreo CB</button>
+        <button onclick="abrirVentanaPopupStrip()" class="btn btn-primary">Monitoreo Strip</button>
 
         <a href="{% url 'ver_promedios' %}"><button>Promedio Historico</button></a>
         <a href="{% url 'registrar_tokens' %}"><button>Registro Ingresos</button></a>
@@ -106,6 +107,13 @@
     function abrirVentanaPopup() {
         window.open(
             "{% url 'mostrar_datos' %}",
+            "popup",
+            "width=1100,height=600,resizable=yes,scrollbars=yes"
+        );
+    }
+    function abrirVentanaPopupStrip() {
+        window.open(
+            "{% url 'mostrar_datos_stripchat' %}",
             "popup",
             "width=1100,height=600,resizable=yes,scrollbars=yes"
         );

@@ -1,0 +1,120 @@
+
+ {% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modelos Filtrados</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .bg-purple {
+            background-color: #c51fe6 !important;
+        }
+        .bg-warning {
+            background-color: #e8fa0b !important;
+        }
+
+        .table-responsive {
+            margin: 10px auto;
+            width: 95%;
+            max-width: 1200px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #0072ff;
+        }
+
+        thead th {
+            padding: 0px;
+            font-weight: bold;
+            text-align: center;
+            background-image: linear-gradient(315deg, #00c6ff 0%, #0072ff 74%);
+            color: white;
+        }
+
+        tbody td {
+            padding: 0px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .bg-purple {
+            background-color: #6f42c1 !important; /* Private */
+            color: white;
+        }
+
+        .bg-warning {
+            background-color: #f0e54e !important; /* Away */
+            color: black;
+        }
+
+        td i {
+            margin-left: 6px;
+            color: #ffc107;
+        }
+
+        div p {
+            font-size: 16px;
+            margin: 10px 0;
+            text-align: center;
+            color: #000000;
+            font-weight: bold;
+        }
+
+    </style>
+   
+    <!--<link rel="stylesheet" href="{% static 'tabla.css' %}">-->
+    <link rel="stylesheet" href="{% static 'posicion/css/mostrar.css' %}">
+
+</head>
+<body>
+    <div class="container">
+        <h3>Modelos Filtrados</h3>
+        
+        <!-- ✅ Bloque que se actualizará -->
+        <div id="contenedor-tabla">
+            {% include 'posicion_strip/tabla_modelos_stripchat.html' %}
+        </div>
+        <!-- ✅ Botón para actualizar -->
+        <button id="actualizar-btn" class="btn btn-primary mb-3">Actualizar</button>
+    </div>
+
+    <!-- ✅ Script para hacer el fetch -->
+    <script>
+        document.getElementById("actualizar-btn").addEventListener("click", function() {
+            fetch("{% url 'actualizar_tabla_stripchat' %}")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("contenedor-tabla").innerHTML = data.html;
+                });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+</body>
+</html>

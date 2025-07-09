@@ -43,7 +43,7 @@ def registrar_tokens(request):
                 fecha=fecha,
                 defaults={
                     'token_cb': form.cleaned_data['token_cb'],
-                    'token_otro': form.cleaned_data['token_otro'],
+                    'token_strip': form.cleaned_data['token_strip'],
                     'promedio_posicion': promedios['promedio_posicion'] or 0,
                     'usuarios': promedios['usuarios'] or 0,
                 }

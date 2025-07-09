@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'promedio',
     'monitores',
     'ingresos_tokens',
-    
+    'posicion_strip',    
 ]
 
 MIDDLEWARE = [

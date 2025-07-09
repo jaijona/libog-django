@@ -26,7 +26,7 @@ urlpatterns = [
     path('', include('promedio.urls')), #promedio
     path('', include('monitores.urls')), #promedio
     path('', include('ingresos_tokens.urls')), #promedio
-    
+    path('', include('posicion_strip.urls')),
     
 ]
 
